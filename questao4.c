@@ -1,79 +1,120 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include "stdbool.h"
 #include "time.h"
-#include "arvoreBinaria.h"
-#include "avl.h"
 #include "vetor.h"
 
-int main(){
+int *criarVetor(int tam){
+	int *vet = (int *)malloc(sizeof(int)*tam);
 
+	return vet;
+}
 
-    int cont;
-    int *vet = criarVetor(1000000);
-    int *vetbusca = criarVetor(30);
-    preencheVetor(vetbusca,30);
-    
-    ArvoreBinaria *tree = inicializa();
-    avl *arvore = criaAvl();
+void preencheVetor(int *vet, int tam){
+	int cont, valor;
 
-    int i,x;
-    avl *aux;
-    ArvoreBinaria *aux2;
-    clock_t ticks[2];
-    double tempoV = 0, tempoA = 0;
+	srand(time(NULL));
+	valor = rand() % 10;
+	for(cont=0;cont<tam;cont++){
+		valor = rand() % 1000000;
+		vet[cont] = valor;
+	}
+}
 
-    for(i=0;i<10;i++){
-        double tempoa, tempob;
-        
-        //ArvoreBinaria *tree = inicializa();
-        //avl *arvore = criaAvl();
-        preencheVetor(vet,100000);
+void preencheVetorTeste(int *vet, int tam){
+	int cont, valor;
 
-        ticks[0] = clock();
+	srand(time(NULL));
+	valor = rand() % 10;
+	for(cont=0;cont<tam;cont++){
+		valor = rand() % 1000000;
+		vet[cont] = valor;
+	}	
+}
 
+void bubleSort(int *vetor, int tam){
+	int cont, aux;
+	bool relou;
 
-        tree = preencheComVetor(tree,vet,100000);
+	do{
+		relou = false;
+		for(cont=0;cont<tam-1;cont++){
+			if(vetor[cont]>vetor[cont+1]){
+				aux = vetor[cont];
+				vetor[cont] = vetor[cont+1];
+				vetor[cont+1] = aux;
+				relou = true;
+			}
+		}
+	}while(relou);
+}
 
-        ticks[1] = clock();
-        tempoa = (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+void insertionSort(int *vetor, int tam){
+	int cont, constante, indMenor;
 
-        printf("%d execucao, criando na arvore binaria em %lf\n", i, tempoa);
-        //printf("%d",altura(tree));
-        ticks[0] = clock();
-        for(cont=0;cont<100000;cont++){
-        //printf("dando lingua\n");
-        arvore = inserirAvl(arvore,vet[cont]);
-        }
-        ticks[1] = clock();
-        tempob = (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-        printf("%d execucao, criando na arvore AVL em %lf\n", i, tempob);
-    }
+	for(constante=0;constante<tam-1;constante++){
+		indMenor = constante;
+		for(cont=constante+1;cont<tam;cont++){
+			if(vetor[cont]<vetor[indMenor]) indMenor = cont;
 
-    printf("\nA altura da arvore AVL foi : %d\n", arvore->altura);
-    printf("\nA altura da arvore binaria foi : %d\n", heightABP(tree));
+			int aux = vetor[constante];
+			vetor[constante] = vetor[indMenor];
+			vetor[indMenor] = aux;
+		}
+	}
+}
 
-    for(i=0;i<30;i++){
-        ticks[0] = clock();
-        aux2 = busca(tree,vetbusca[i]);
-        //if(aux2!=NULL) printf("Achou!\n");
-        //else printf("Não achou!\n");
-        ticks[1] = clock();
-        tempoA += (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-        printf("%d° execucao, procurando %d na arvore binaria em %lf\n", i, vetbusca[i], tempoV);
-        ticks[0] = clock();
-        aux = buscaAvl(arvore,vetbusca[i]);
-        //if(aux!=NULL) printf("Achou!\n");
-        //else printf("Não achou!\n");
-        ticks[1] = clock();
-        tempoV += (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-        printf("%d° execucao, procurando %d na arvore AVL em %lf\n", i, vetbusca[i], tempoA);
-    }
+void quickSort(int *vetor, int inicio, int fim){
+	int pivo, aux, i, j, meio;
 
-    tempoV /= 30;
-    tempoA /= 30;
+	i = inicio;
+	j = fim;
+	meio = (int)((i+j)/2);
+	pivo = vetor[meio];
 
-    printf("tempo gasto em media na  foi: %.6lf segundos\n", tempoV);
-    printf("tempo gasto em media na arvore foi: %.6lf segundos\n", tempoA);
+	do{
+		while(vetor[i]<pivo) i++;
+		while(vetor[j]>pivo) j--;
 
-    return 1;
+		if(i<=j){
+			aux = vetor[i];
+			vetor[i] = vetor[j];
+			vetor[j] = aux;
+			i++;
+			j--;
+		}
+	}while(j>i);
+
+	if(inicio<j) quickSort(vetor,inicio,j);
+	if(i<fim) quickSort(vetor,i,fim);
+}
+
+int buscaBinariaVetor(int *vet, int tam, int chave){
+	int inicio, fim, meio;
+
+	inicio = 0;
+	fim = tam-1;
+	meio = (inicio+fim)/2;
+
+	while(fim>inicio){
+		if(vet[meio]==chave) return 0;
+		else if(vet[meio]>chave) fim--;
+		else if(vet[meio]<chave) inicio++;
+
+		meio = (inicio+fim)/2;
+	}
+
+	return 1;
+}
+
+int buscaSequencialVetor(int *vet, int tam, int chave){
+	int cont;
+
+	while(cont>tam){
+		if(vet[cont]==chave) return 0;
+
+		cont++;
+	}
+
+	return 1;
 }
