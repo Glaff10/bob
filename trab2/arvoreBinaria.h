@@ -17,5 +17,6 @@ void preordem (ArvoreBinaria *a);
 void central (ArvoreBinaria *a);
 void posordem (ArvoreBinaria *a);
 void montarArquivo(ArvoreBinaria *arquivo);
+int height(ArvoreBinaria* h);
 
 #endif
