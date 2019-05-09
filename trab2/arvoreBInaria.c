@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "time.h"
+#include "arvoreBinaria.h"
 
 struct tipoArvore{
 	int valor;
@@ -13,26 +14,28 @@ ArvoreBinaria *inicializa(void){
 	return NULL;
 }
 
-ArvoreBinaria *inserir(ArvoreBinaria *t, int valor){
-	if(t==NULL){
-		t = (ArvoreBinaria *)malloc(sizeof(ArvoreBinaria));
-		t->valor = valor;
-		t->esq = t->dir = NULL;
-	}else if(valor < t->valor){
-		t->esq = inserir(t->esq,valor);
-	}else{
-		t->dir = inserir(t->dir,valor);
-	}
-
-	return t;
+ArvoreBinaria *inserir(ArvoreBinaria *a, int valor){
+	if(a == NULL){
+    a = (ArvoreBinaria*)malloc(sizeof(ArvoreBinaria));
+    a->valor = valor;
+    a->esq = a->dir = NULL;
+  }
+  else if(valor < a->valor){
+    a->esq = inserir(a->esq,valor);
+  }
+  else{
+    a->dir = inserir(a->dir,valor);
+  }
+  return a;
 }
+
 
 ArvoreBinaria *preencheArvore(ArvoreBinaria *a, int tam){
 	int cont, valor;
 
 	srand(time(NULL));
 	for(cont=0;cont<tam;cont++){
-		valor = rand() % (int)(2,5*tam);
+		valor = rand() % (int)(2.5*tam);
 		a = inserir(a,valor);
 	}
 
@@ -87,6 +90,16 @@ ArvoreBinaria *retira(ArvoreBinaria *t, int valor){
 
 		return t;
 	}
+}
+
+int height(ArvoreBinaria* h) {
+
+    int u, v;
+    if (h == NULL) return -1;
+    u = height(h->esq);
+    v = height(h->dir);
+    if (u > v) return u+1;
+    else return v+1;
 }
 
 ArvoreBinaria *recebeArquivo(int tam){
