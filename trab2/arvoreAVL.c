@@ -1,191 +1,141 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "time.h"
+#include "avl.h"
 
-struct tipoArvoreAVL{
-	int valor;
-	int balance;
-	struct tipoArvoreAVL *esq;
-	struct tipoArvoreAVL *dir;
-};
-typedef struct tipoArvoreAVL ArvoreAVL;
-
-int altura(ArvoreAVL *t){
-	if(t==NULL) return 0;
-	int hesq = altura(t->esq);
-	int hdir = altura(t->dir);
-
-	if(hesq>hdir) return hesq+1;
-	else return hdir+1;
+int max(int a, int b){
+    if(a>b) return a;
+    return b;
 }
 
-ArvoreAVL *cria(int valor, ArvoreAVL *esq, ArvoreAVL *dir){
-	ArvoreAVL *novo = (ArvoreAVL *)malloc(sizeof(ArvoreAVL));
-
-	novo->valor = valor;
-	novo->balance = (altura(dir) - altura(esq));
-	novo->esq = esq;
-	novo->dir = dir;
-
-	return novo;
+int altura(avl* atu){
+    if(atu) return atu->altura;
+    return -1;
 }
 
-int verificaAVL(ArvoreAVL *t){
-	if(t==NULL) return 1;
-	if(abs(altura(t->dir) - altura(t->esq)) <= 1) return 0;
+avl* criaAvl(){
+    return NULL;
 }
 
-void escreve(ArvoreAVL *t){
-	if(t!=NULL){
-		escreve(t->esq);
-		printf("valor: %d balanceamento: (%d)\n", t->valor, t->balance);
-		escreve(t->dir);
-	}
+avl* criaNo(int num){
+    avl *a = (avl*)malloc(sizeof(avl));
+    a->dir = a->esq = NULL;
+    a->altura = 0;
+    a->num = num;
+    return a;
 }
 
-void escreveVerifica(ArvoreAVL *t){
-	if(!verificaAVL(t)) printf("NAO EH AVL!\n");
-	escreve(t);
-	printf("\n");
+avl* Rrot(avl* k2){
+    avl* k1 = k2->esq;
+    k2->esq = k1->dir;
+    k1->dir = k2;
+
+    k2->altura = max(altura(k2->esq), altura(k2->dir)) + 1;
+    k1->altura = max(altura(k1->esq), altura(k2)) + 1;
+    return k1; /* new root */
 }
 
-void rotacaoSimplesEsquerda(ArvoreAVL **t){
-	ArvoreAVL *b = *t;
-	ArvoreAVL *a = b->esq;
-	b->esq = a->dir;
-	a->dir = b;
-	a->balance = 0;
-	b->balance = 0;
-	*t = a;
+avl* Lrot(avl* k1){
+    avl* k2 = k1->dir;
+    k1->dir = k2->esq;
+    k2->esq = k1;
+
+    k1->altura = max(altura(k1->esq), altura(k1->dir)) + 1;
+    k2->altura = max(altura(k2->dir), altura(k1)) + 1;
+
+    return k2;  /* New root */
 }
 
-void rotacaoSimplesDireita(ArvoreAVL **t){
-	ArvoreAVL *a = *t;
-	ArvoreAVL *b = a->dir;
-	a->dir = b->esq;
-	b->esq = a;
-	a->balance = 0;
-	b->balance = 0;
-	*t = b;
+avl* LRrot(avl* k3){
+    k3->esq = Lrot(k3->esq);
+    return Rrot(k3);
 }
 
-void rotacaoEsquerdaDireita(ArvoreAVL **t){
-	ArvoreAVL *c = *t;
-	ArvoreAVL *a = c->esq;
-	ArvoreAVL *b = a->dir;
-
-	c->esq = b->dir;
-	a->dir = b->esq;
-	b->esq = a;
-	b->dir = c;
-
-	switch(b->balance){
-		case -1:
-			a->balance = 0;
-			c->balance = 1;
-			break;
-		case 0:
-			a->balance = 0;
-			c->balance = 0;
-			break;
-		case +1:
-			a->balance = -1;
-			c->balance = 0;
-			break;
-	}
-
-	b->balance = 0;
-	*t = b;
+avl* RLrot(avl* k1){
+    k1->dir = Rrot(k1->dir);
+    return Lrot(k1);
+}
+avl* inserirAvl(avl* atu, int num){
+    if(atu == NULL) atu = criaNo(num);
+    else if(num < atu->num){
+        atu->esq = inserirAvl(atu->esq, num);
+        if(altura(atu->esq) - altura(atu->dir) == 2){
+            if(num < atu->esq->num) atu = Rrot(atu);
+            else atu = LRrot(atu);
+        }
+    }
+    else if(num > atu->num){
+        atu->dir = inserirAvl(atu->dir, num);
+        if(altura(atu->dir) - altura(atu->esq) == 2){
+            if(num > atu->dir->num) atu = Lrot(atu);
+            else atu = RLrot(atu);
+        }
+    }
+    atu->altura = max(altura(atu->esq), altura(atu->dir)) + 1;
+    return atu;
 }
 
-void rotacaoDireitaEsquerda(ArvoreAVL **t){
-	ArvoreAVL *a = *t;
-	ArvoreAVL *c = a->dir;
-	ArvoreAVL *b = c->esq;
 
-	c->esq = b->dir;
-	a->dir = b->dir;
-	b->esq = a;
-	b->dir = c;
-
-	switch(b->balance){
-		case -1:
-			a->balance = 0;
-			c->balance = 1;
-			break;
-		case 0:
-			a->balance = 0;
-			c->balance = 0;
-			break;
-		case +1:
-			a->balance = -1;
-			c->balance = 0;
-			break;
-	}
-
-	b->balance = 0;
-	*t = b;
+avl* buscaAvl(avl *a, int num) {
+    avl *ret = NULL;
+    if(a == NULL) {
+        ret = NULL;
+    }
+    else if(num > a->num) {
+        ret = buscaAvl(a->dir,num);
+    }
+    else if(num < a->num) {
+        ret = buscaAvl(a->esq,num);
+    }
+    else {
+        ret = a;
+    }
+    return ret;
 }
 
-int auxInserir(ArvoreAVL **t,int valor, int cresceu){
-	if(*t==NULL){
-		*t = cria(valor, NULL, NULL);
-		cresceu = 1;
-		return 1;
-	}
-
-	if(valor==(*t)->valor) return 0;
-
-	if(valor<(*t)->valor){
-		if(auxInserir(&(*t)->esq, valor, cresceu)){
-			if(cresceu){
-				switch((*t)->balance){
-					case -1:
-						if((*t)->esq->balance==-1) rotacaoSimplesEsquerda(t);
-						else rotacaoEsquerdaDireita(t);
-						cresceu = 0;
-						break;
-					case 0:
-						(*t)->balance = -1;
-						cresceu = 1;
-						break;
-					case +1:
-						(*t)->balance = 0;
-						cresceu = 0;
-						break;
-				}
-			}
-			return 1;
-		}else{
-			return 0;
-		}
-	}
-
-	if(auxInserir(&(*t)->dir, valor, cresceu)){
-		if(cresceu){
-			switch((*t)->balance){
-				case -1:
-					(*t)->balance = 0;
-					cresceu = 0;
-					break;
-				case 0:
-					(*t)->balance = +1;
-					cresceu = 0;
-					break;
-				case +1:
-					if((*t)->dir->balance==+1) rotacaoSimplesDireita(t);
-					else rotacaoDireitaEsquerda(t);
-					cresceu = 0;
-					break;
-			}
-		}
-		return 1;
-	}else{
-		return 0;
-	}
+void imprimeAvl(avl *a, int val) {
+    if(a!=NULL) {
+        if(val==0) printf("%d\n",a->num);
+        imprimeAvl(a->esq,val);
+        if(val==1) printf("%d\n",a->num);
+        imprimeAvl(a->dir,val);
+        if(val==2) printf("%d\n",a->num);
+    }
 }
 
-int inserirAVL(ArvoreAVL **t, int valor){
-	int cresceu;
-	return auxInserir(t,valor,cresceu);
+avl* liberaAvl(avl *a) {
+    if(a != NULL) {
+        liberaAvl(a->esq);
+        liberaAvl(a->dir);
+        free(a);
+    }
+    return NULL;
+}
+
+int taEmOrdem(avl *atu){
+    int res = 1;
+    if(atu->esq) res &= (taEmOrdem(atu->esq) && atu->esq->num <= atu->num);
+    if(atu->dir) res &= (taEmOrdem(atu->dir) && atu->dir->num >= atu->num);
+    return res;
+}
+int numElementos(avl *atu){
+    int res = 0;
+    if(atu) res = 1 + numElementos(atu->esq) + numElementos(atu->dir);
+    return res;
+}
+int altura2(avl *atu){
+    if(!atu) return 0;
+    int res = 0;
+    if(atu->esq) res += 1 + altura2(atu->esq);
+    if(atu->dir) res=max(res, 1 + altura2(atu->dir));
+    return res;
+}
+
+int taBalanceada(avl *atu){
+    if(!atu) return 1;
+    int bf = altura2(atu->dir) - altura2(atu->esq);
+    if(bf>1 || bf<-1) return 0;
+    return taBalanceada(atu->esq) && taBalanceada(atu->dir);
+}
+
+
+int taCerto(avl *atu, int n){
+    return (taEmOrdem(atu) && numElementos(atu) == n && taBalanceada(atu));
 }
