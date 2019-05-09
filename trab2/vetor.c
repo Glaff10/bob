@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "stdbool.h"
 #include "time.h"
+#include "vetor.h"
 
 int *criarVetor(int tam){
 	int *vet = (int *)malloc(sizeof(int)*tam);
@@ -12,9 +13,10 @@ int *criarVetor(int tam){
 void preencheVetor(int *vet, int tam){
 	int cont, valor;
 
+	srand(time(NULL));
 	valor = rand() % 10;
 	for(cont=0;cont<tam;cont++){
-		valor = valor + rand() % 10;
+		valor = rand() % 1000000;
 		vet[cont] = valor;
 	}
 }
@@ -22,9 +24,10 @@ void preencheVetor(int *vet, int tam){
 void preencheVetorTeste(int *vet, int tam){
 	int cont, valor;
 
+	srand(time(NULL));
 	valor = rand() % 10;
 	for(cont=0;cont<tam;cont++){
-		valor = valor + rand() % 1000;
+		valor = rand() % 1000000;
 		vet[cont] = valor;
 	}	
 }
