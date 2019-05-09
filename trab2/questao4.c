@@ -8,79 +8,74 @@
 int main(){
 
 
+    int cont;
     int *vet = criarVetor(1000000);
+    int *vetbusca = criarVetor(30);
+    preencheVetorTeste(vetbusca,30);
+    
     ArvoreBinaria *tree = inicializa();
-    ArvoreAVL *arvore = 
-    preencheVetor(vet,1000000);
-    tree = preencheComVetor(tree,vet,1000000);
-
-
-    *prim = Cria_Arvore_Binaria();
-    *primo = Cria_Arvore_AVL();
-
-    preenche_Arvore_Binaria(1000000, prim);
-
-    preenche_Arvore_AVL(1000000, primo);
+    avl *arvore = criaAvl();
 
     int i,x;
-    clock_t in, f;
-    double tempob, tempoi, tempoq;
-    Arvore_binaria first[10];
-    Arvore_AVL sec[10];
+    avl *aux;
+    ArvoreBinaria *aux2;
+    clock_t ticks[2];
+    double tempoV = 0, tempoA = 0, timeA = 0, timeB = 0;
 
     for(i=0;i<10;i++){
         double tempoa, tempob;
-        in = clock();
+        
+        tree = inicializa();
+        arvore = criaAvl();
+        preencheVetor(vet,1000000);
 
-        Cria_Arvore_Binaria();
-        preenche_Arvore_Binaria(1000000, prim);
+        ticks[0] = clock();
 
-        f = clock();
 
-        tempoa += ((double) (f-in))/CLOCKS_PER_SEC
+        tree = preencheComVetor(tree,vet,1000000);
 
-        in = clock();
+        ticks[1] = clock();
+        tempoa = (double) (ticks[1] - ticks[0]) * 1000.0/ CLOCKS_PER_SEC;
 
-        Cria_Arvore_AVL();
-        preenche_Arvore_AVL(1000000, prim);
-
-        f = clock();
-
-        tempob += ((double) (f-in))/CLOCKS_PER_SEC
-
-        printf("%d° execucao, criando no arvore binaria em %lf", i, tempoa);
-        printf("%d° execucao, criando na arvore AVL em %lf", i, tempob);
+        printf("%d execucao, criando na arvore binaria em %lf\n", i+1, tempoa);
+        //printf("%d",altura(tree));
+        ticks[0] = clock();
+        for(cont=0;cont<10000;cont++){
+        //printf("dando lingua\n");
+        arvore = inserirAvl(arvore,vet[cont]);
+        }
+        ticks[1] = clock();
+        tempob = (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+        printf("%d execucao, criando na arvore AVL em %lf\n", i+1, tempob);
     }
 
-     for(i=0;i<30;i++){
-        in = clock();
+    printf("\nA altura da arvore AVL foi : %d\n", arvore->altura);
+    printf("\nA altura da arvore binaria foi : %d\n", height(tree));
 
-        x = 1000000/(i+1);
-        int t = busca_binaria_Arvore_Binaria(x, prim);
-
-        f = clock();
-
-        tempoV += ((double) (f-in))/CLOCKS_PER_SEC
-
-        in = clock();
-
-        tempoV += ((double) (f-in))/CLOCKS_PER_SEC
-
-        int h = busca_Arvore_AVL(x, primo);
-
-        f = clock();
-
-        tempoA += ((double) (f-in))/CLOCKS_PER_SEC
-
-        printf("%d° execucao, procurando %d na arvore binaria e achando %d em %lf", i, x, t, tempoV);
-        printf("%d° execucao, procurando %d na arvore AVL e achando %d em %lf", i, x, h, tempoA);
+    for(i=0;i<30;i++){
+        ticks[0] = clock();
+        aux2 = busca(tree,vetbusca[i]);
+        //if(aux2!=NULL) printf("Achou!\n");
+        //else printf("Não achou!\n");
+        ticks[1] = clock();
+        timeA = (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+        tempoA += timeA;
+        printf("%d° execucao, procurando %d na arvore binaria em: %lf\n\n", i+1, vetbusca[i], timeA);
+        ticks[0] = clock();
+        aux = buscaAvl(arvore,vetbusca[i]);
+        //if(aux!=NULL) printf("Achou!\n");
+        //else printf("Não achou!\n");
+        ticks[1] = clock();
+        timeB = (double) (ticks[1] - ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+        tempoV += timeB;
+        printf("%d° execucao, procurando %d na arvore AVL em :%lf\n\n", i+1, vetbusca[i], timeB);
     }
 
     tempoV /= 30;
     tempoA /= 30;
 
-    printf("tempo gasto em media no vetor foi: %.1lf segundos\n", tempoV);
-    printf("tempo gasto em media na arvore foi: %.1lf segundos\n", tempoA);
+    printf("tempo gasto em media na arvore binaria foi: %.6lf segundos\n", tempoA);
+    printf("tempo gasto em media na arvore AVL foi: %.6lf segundos\n", tempoV);
 
-    return 1;
+    return 0;
 }
