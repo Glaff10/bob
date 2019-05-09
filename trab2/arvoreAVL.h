@@ -1,20 +1,24 @@
-# Ifndef ARVOREAVL_H
-# define  ARVOREAVL_H
+#include<stdio.h>
+#include<stdlib.h>
 
-// DEFINICAO DO TIPO ARVORE
-typedef  struct tipoArvoreAVL ArvoreAVL;
+struct avl{
+  int num, altura;
+  struct avl* esq;
+  struct avl* dir;
+};
 
-// FUNCOES DE MANIPULACAO DA ARVORE
-ArvoreAVL * cria ( int valor, ArvoreAVL * esq, ArvoreAVL * dir);
-int  altura (ArvoreAVL * t);
-int  verificaAVL (ArvoreAVL * t);
-void  escreve (ArvoreAVL * t);
-void  digitarVerifica (ArvoreAVL * t);
-void  rotacaoSimplesEsquerda (ArvoreAVL ** t);
-void  rotacaoSimplesDireita (ArvoreAVL ** t);
-void  rotacaoEsquerdaDireita (ArvoreAVL ** t);
-void  rotacaoDireitaEsquerda (ArvoreAVL ** t);
-int  inserirAVL (ArvoreAVL ** t, int valentes);
-int  auxInserir (ArvoreAVL ** t, int valor, int * cresceu);
+typedef struct avl avl;
 
-# endif
+avl* criaAvl();
+
+int taCerto(avl *atu, int n);
+
+avl* inserirAvl(avl *a,int num);
+
+void imprimeAvl(avl *a, int val);
+
+avl* buscaAvl(avl *a, int num);
+
+avl* liberaAvl(avl *a);
+
+int taBalanceada(avl *atu);
