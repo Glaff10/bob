@@ -7,7 +7,11 @@
 
 typedef struct Grafo grafo;
 
-*Grafo preencher_grafo(Grafo *g, int vertices, int arestas){
+Grafo *cria_grafo(void){
+	return NULL;
+}
+
+Grafo *preencher_grafo(Grafo *g, int vertices, int arestas){
 	
 	g = (Grafo*) malloc(sizeof(Grafo));
 
