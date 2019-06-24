@@ -21,11 +21,15 @@ Grafo *preencher_grafo(Grafo *g, int vertices, int arestas){
 	memset(g->matriz, -1, sizeof(g->matriz)); // setado todos os espaços dessa matriz para -1
 	memset(g->visitado, -1, sizeof(g->visitado));
 
-	for(int i=0; i<vertices; i++){
+	for(int i=1; i<vertices; i++){
 		for(int j=0; j<arestas; j++){
-			g->matriz[i][valor] = 1;
-			valor = rand() % vertices;
-		}	
+			int valor = rand() % i; // para garantir que é conexo (so pegando vertices anteriores a ele)
+			
+			if(g->matriz[i][valor]>=0){
+				g->matriz[i][valor] = 1;
+				g->matriz[valor][i] = 1;
+			}	
+		}
 	}
 
 	return g;
