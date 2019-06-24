@@ -19,7 +19,7 @@ Grafo *preencher_grafo(Grafo *g, int vertices, int arestas){
 	valor = rand() % vertices;
 
 	memset(g->matriz, -1, sizeof(g->matriz)); // setado todos os espaços dessa matriz para -1
-	memset(g->visitado, 0, sizeof(g->visitado));
+	memset(g->visitado, -1, sizeof(g->visitado));
 
 	for(int i=0; i<vertices; i++){
 		for(int j=0; j<arestas; j++){
