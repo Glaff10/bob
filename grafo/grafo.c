@@ -50,7 +50,7 @@ void bfs(int v, int tam, Grafo *g){
 		fila.pop(); // retira da fila
 
 		for(int i=0; i<tam; i++){
-			if(g->visitado[matriz[v][i]] == -1 && g->matriz[v][i]!=-1){
+			if(g->visitado[matriz[v][i]] == -1 && g->matriz[v][i]==1){
 				fila.push(g->matriz[v][i]);
 				g->visitado[g->matriz[v][i]] = 1;
 			}
@@ -62,7 +62,7 @@ void dfs(int v, int tam, Grafo *g){
 
 	for(int i=0; i<tam; i++){
 
-		if(g->visitado[g->matriz[v][i]]==-1 && g->matriz[v][i]!=-1){
+		if(g->visitado[g->matriz[v][i]]==-1 && g->matriz[v][i]==1){
 			
 			int vizinho = g->matriz[v][i];
 
@@ -76,7 +76,7 @@ void dfs_todos_os_caminhos(int v, int tam, Grafo *g){
 
 	for(int i=0; i<tam; i++){
 
-		if(g->visitado[g->matriz[v][i]]==-1 && g->matriz[v][i]!=-1){
+		if(g->visitado[g->matriz[v][i]]==-1 && g->matriz[v][i]==1){
 			
 			int vizinho = g->matriz[v][i];
 
