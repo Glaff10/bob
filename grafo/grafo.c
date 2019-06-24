@@ -16,7 +16,7 @@ Grafo *preencher_grafo(Grafo *g, int vertices, int arestas){
 	g = (Grafo*) malloc(sizeof(Grafo));
 
 	srand(time(NULL));
-	valor = rand() % vertices;
+	int valor;
 
 	memset(g->matriz, -1, sizeof(g->matriz)); // setado todos os espaços dessa matriz para -1
 	memset(g->visitado, -1, sizeof(g->visitado));
